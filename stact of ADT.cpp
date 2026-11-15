@@ -1,335 +1,186 @@
-#include <iostream> 
-
-#include <string> 
-
-#include <cctype> 
-
-using namespace std; 
-
+#include <iostream>
+#include <string>
+#include <cctype>
  
-
-class Node      // Node of Singly Linked List 
-
-{ 
-
-public: 
-
-    char data; 
-
-    Node *next; 
-
-    Node(char value) 
-
-    { 
-
-        data = value; 
-
-        next = NULL; 
-
-    } 
-
-}; 
-
-// Stack ADT using Linked List 
-
-class Stack 
-
-{ 
-
-    Node *top; 
-
+using namespace std;
  
-
-public: 
-
-    Stack() 
-
-    { 
-
-        top = NULL; 
-
-    } 
-
+class Node      // Node of Singly Linked List
+{
+public:
+    int data;
+    Node *next;
  
-
-    void push(char value) 
-
-    { 
-
-        Node *newNode = new Node(value); 
-
-        newNode->next = top; 
-
-        top = newNode; 
-
-    } 
-
+    Node(int value)
+    {
+        data = value;
+        next = NULL;
+    }
+};
  
-
-    char pop() 
-
-    { 
-
-        if (top == NULL) 
-
-            return '\0'; 
-
+// Stack ADT using Linked List
+class Stack
+{
+    Node *top;
  
-
-        char value = top->data; 
-
-        Node *temp = top; 
-
-        top = top->next; 
-
-        delete temp; 
-
+public:
+    Stack()
+    {
+        top = NULL;
+    }
  
-
-        return value; 
-
-    } 
-
-    char peek() 
-
-    { 
-
-        if (top == NULL) 
-
-            return '\0'; 
-
-        return top->data; 
-
-    } 
-
+    void push(int value)
+    {
+        Node *newNode = new Node(value);
+        newNode->next = top;
+        top = newNode;
+    }
  
-
-    bool isEmpty() 
-
-    { 
-
-        return top == NULL; 
-
-    } 
-
-}; 
-
+    int pop()
+    {
+        if (top == NULL)
+            return 0;
  
-
-// Check operator 
-
-bool isOperator(char ch) 
-
-{ 
-
-    return ch == '+' || ch == '-' || ch == '*' || ch == '/'; 
-
-} 
-
-int priority(char ch)    // Priority of operator 
-
+        int value = top->data;
+        Node *temp = top;
+        top = top->next;
+        delete temp;
  
-
-{ 
-
-    if (ch == '+' || ch == '-') 
-
-        return 1; 
-
+        return value;
+    }
  
-
-    if (ch == '*' || ch == '/') 
-
-        return 2; 
-
+    int peek()
+    {
+        if (top == NULL)
+            return 0;
  
-
-    return 0; 
-
-} 
-
+        return top->data;
+    }
  
-
-// Infix to Postfix 
-
-string infixToPostfix(string infix) 
-
-{ 
-
-    Stack s; 
-
-    string postfix = ""; 
-
+    bool isEmpty()
+    {
+        return top == NULL;
+    }
+};
  
-
-    for (char ch : infix) 
-
-    { 
-
-        if (isdigit(ch)) 
-
-        { 
-
-            postfix += ch; 
-
-        } 
-
-        else if (ch == '(') 
-
-        { 
-
-            s.push(ch); 
-
-        } 
-
-        else if (ch == ')') 
-
-        { 
-
-            while (!s.isEmpty() && s.peek() != '(') 
-
-                postfix += s.pop(); 
-
+// Check operator
+bool isOperator(char ch)
+{
+    return ch == '+' || ch == '-' || ch == '*' || ch == '/';
+}
  
-
-            s.pop(); // remove '(' 
-
-        } 
-
-        else if (isOperator(ch)) 
-
-        { 
-
-            while (!s.isEmpty() && 
-
-                   priority(s.peek()) >= priority(ch)) 
-
-            { 
-
-                postfix += s.pop(); 
-
-            } 
-
+// Priority of operator
+int priority(char ch)
+{
+    if (ch == '+' || ch == '-')
+        return 1;
  
-
-            s.push(ch); 
-
-        } 
-
-    } 
-
+    if (ch == '*' || ch == '/')
+        return 2;
  
-
-    while (!s.isEmpty()) 
-
-        postfix += s.pop(); 
-
+    return 0;
+}
  
-
-    return postfix; 
-
-} 
-
+// Infix to Postfix
+string infixToPostfix(string infix)
+{
+    Stack s;
+    string postfix = "";
  
-
-// Evaluate Postfix 
-
-int evaluatePostfix(string postfix) 
-
-{ 
-
-    Stack s; 
-
-    int a, b, result; 
-
+    for (char ch : infix)
+    {
+        if (isdigit(static_cast<unsigned char>(ch)))
+        {
+            postfix += ch;
+        }
+        else if (ch == '(')
+        {
+            s.push(ch);
+        }
+        else if (ch == ')')
+        {
+            while (!s.isEmpty() && s.peek() != '(')
+                postfix += static_cast<char>(s.pop());
  
-
-    for (char ch : postfix) 
-
-    { 
-
-        if (isdigit(ch)) 
-
-        { 
-
-            s.push(ch - '0'); 
-
-        } 
-
-        else if (isOperator(ch)) 
-
-        { 
-
-            b = s.pop(); 
-
-            a = s.pop(); 
-
+            if (!s.isEmpty())
+                s.pop(); // remove '('
+        }
+        else if (isOperator(ch))
+        {
+            while (!s.isEmpty() && s.peek() != '(' &&
+                   priority(static_cast<char>(s.peek())) >= priority(ch))
+            {
+                postfix += static_cast<char>(s.pop());
+            }
  
-
-            switch (ch) 
-
-            { 
-
-            case '+': 
-
-                result = a + b; 
-
-                break; 
-
+            s.push(ch);
+        }
+    }
  
-
-            case '-': 
-
-                result = a - b; 
-
-                break; 
-
+    while (!s.isEmpty())
+        postfix += static_cast<char>(s.pop());
  
-
-            case '*': 
-
-                result = a * b; 
-
-                break; 
-
+    return postfix;
+}
  
-
-            case '/': 
-
-                result = a / b; 
-
-                break; 
-
-            } 
-
-            s.push(result); 
-
-        } 
-
-    } 
-
-    return s.pop(); 
-
-} 
-
-int main() 
-
-{ 
-
-    string infix, postfix; 
-
+// Evaluate Postfix
+int evaluatePostfix(string postfix)
+{
+    Stack s;
+    int a, b, result;
  
-
-    cout << "Enter infix expression: "; 
-
-    cin >> infix; 
-
-    postfix = infixToPostfix(infix); 
-
-    cout << "Postfix expression: " << postfix << endl; 
-
-    cout << "Result: " << evaluatePostfix(postfix) << endl; 
-
-    return 0; 
-
-} 
+    for (char ch : postfix)
+    {
+        if (isdigit(static_cast<unsigned char>(ch)))
+        {
+            s.push(ch - '0');
+        }
+        else if (isOperator(ch))
+        {
+            b = s.pop();
+            a = s.pop();
+ 
+            switch (ch)
+            {
+            case '+':
+                result = a + b;
+                break;
+ 
+            case '-':
+                result = a - b;
+                break;
+ 
+            case '*':
+                result = a * b;
+                break;
+ 
+            case '/':
+                if (b == 0)
+                {
+                    cout << "Error: Division by zero." << endl;
+                    return 0;
+                }
+                result = a / b;
+                break;
+            }
+ 
+            s.push(result);
+        }
+    }
+ 
+    return s.pop();
+}
+ 
+int main()
+{
+    string infix, postfix;
+ 
+    cout << "Enter infix expression: ";
+    cin >> infix;
+ 
+    postfix = infixToPostfix(infix);
+ 
+    cout << "Postfix expression: " << postfix << endl;
+    cout << "Result: " << evaluatePostfix(postfix) << endl;
+ 
+    return 0;
+}
