@@ -1,18 +1,19 @@
 
 # Experiment No. 7: Minimum Spanning Tree
 
-n = int(input("Enter number of offices: "))
+# Number of offices
+n = 5
 
-m = int(input("Enter number of connections: "))
-
-edges = []
-
-print("Enter connections: office1 office2 cost")
-
-for i in range(m):
-    u, v, w = map(int, input().split())
-    edges.append((u, v, w))
-
+# Connections: (Office1, Office2, Cost)
+edges = [
+    (0, 1, 2),
+    (0, 3, 6),
+    (1, 2, 3),
+    (1, 3, 8),
+    (1, 4, 5),
+    (2, 4, 7),
+    (3, 4, 9)
+]
 
 # Prim's Algorithm
 def prim():
@@ -23,16 +24,11 @@ def prim():
 
     while len(mst) < n - 1:
         minimum = float('inf')
-        edge = None
 
         for u, v, w in edges:
             if visited[u] != visited[v] and w < minimum:
                 minimum = w
                 edge = (u, v, w)
-
-        if edge is None:
-            print("Graph is not connected!")
-            return
 
         u, v, w = edge
         visited[u] = True
@@ -40,11 +36,8 @@ def prim():
         mst.append(edge)
         cost += w
 
-    print("\nPrim's MST:")
-    for u, v, w in mst:
-        print(u, "-", v, "Cost:", w)
-
-    print("Total cost using Prim's:", cost)
+    print("\nPrim's MST:", mst)
+    print("Prim's Total Cost:", cost)
 
 
 # Kruskal's Algorithm
@@ -70,19 +63,9 @@ def kruskal():
         if len(mst) == n - 1:
             break
 
-    if len(mst) != n - 1:
-        print("\nGraph is not connected!")
-        return
-
-    print("\nKruskal's MST:")
-    for u, v, w in mst:
-        print(u, "-", v, "Cost:", w)
-
-    print("Total cost using Kruskal's:", cost)
+    print("\nKruskal's MST:", mst)
+    print("Kruskal's Total Cost:", cost)
 
 
-if n > 0:
-    prim()
-    kruskal()
-else:
-    print("Number of offices must be positive!")
+prim()
+kruskal()
